@@ -1,49 +1,18 @@
 import React, { useRef, useEffect, useState } from 'react'
 import * as d3 from 'd3'
-import { IconButton, Input } from '@material-ui/core'
-import { Delete, Add } from '@material-ui/icons'
-import { Wellness, ItemList, Item } from './WellnessWheel.styles'
+import { Svg } from '../styles/WellnessWheel.styles'
 
-const initialData = [
-  { name: 'Nutrition', value: 10 },
-  { name: 'Movement', value: 5 },
-  { name: 'Mindset', value: 4 },
-  { name: 'Stress', value: 0 },
-  { name: 'Finances', value: 7 },
-  { name: 'Career', value: 3 },
-  { name: 'Play', value: 9 },
-  { name: 'Social', value: 8 }
-]
-
-const width = 700
-const height = 600
-const radius = (Math.min(width, height) / 2) * 1.1
+const width = 600
+const height = 500
+const radius = (Math.min(width, height) / 2) * 1.15
 const maxValue = 10
 
-function Pie() {
+function Pie({ data, updateData }) {
   const ref = useRef()
-  const [data, updateData] = useState(initialData)
 
   function updateItemValue(index, value) {
     const values = [...data]
     values.splice(index, 1, { name: data[index].name, value })
-    updateData(values)
-  }
-
-  function updateItemName(index, name) {
-    const values = [...data]
-    values.splice(index, 1, { name, value: data[index].value })
-    updateData(values)
-  }
-
-  function removeItem(index) {
-    const values = [...data]
-    values.splice(index, 1)
-    updateData(values)
-  }
-
-  function addItem() {
-    const values = [...data, { name: '', value: 0 }]
     updateData(values)
   }
 
@@ -99,61 +68,61 @@ function Pie() {
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(10))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 10))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(9))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 9))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(8))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 8))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(7))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 7))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(6))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 6))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(5))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 5))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(4))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 4))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(3))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 3))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(2))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 2))
 
     g.append('path')
       .attr('stroke', '#9e9e9e')
       .attr('d', getMiddleArcs(1))
-      .style('fill', 'white')
+      .style('fill', 'rgba(0,0,0,0.2)')
       .on('click', (event, d) => updateItemValue(d.index, 1))
 
     g.append('path')
@@ -171,11 +140,13 @@ function Pie() {
       .data(arcs)
       .join('text')
       .attr('transform', d => `translate(${arcLabel.centroid(d)})`)
+      .attr('letter-spacing', '1')
       .call(text =>
         text
           .append('tspan')
           .attr('y', '-0.4em')
           .attr('font-weight', 'bold')
+          .attr('fill', 'black')
           .text(d => d.data.name)
       )
       .call(text =>
@@ -185,6 +156,7 @@ function Pie() {
           .attr('x', 0)
           .attr('y', '0.7em')
           .attr('fill-opacity', 0.7)
+          .attr('fill', 'black')
           .text(d => d.data.value.toLocaleString())
       )
   }
@@ -196,37 +168,7 @@ function Pie() {
     writeD3()
   }, [data])
 
-  return (
-    <Wellness>
-      <ItemList>
-        {data.map((item, index) => (
-          <Item key={index}>
-            <Input
-              id={`input${index}`}
-              value={item.name}
-              onChange={event => updateItemName(index, event.target.value)}
-            />
-            <IconButton
-              label="remove"
-              id="delete"
-              size="small"
-              onClick={() => removeItem(index)}>
-              𝘅
-            </IconButton>
-          </Item>
-        ))}
-        <IconButton
-          label="add"
-          id="addNew"
-          onClick={addItem}
-          style={{ fontSize: 12 }}>
-          Add +
-        </IconButton>
-      </ItemList>
-
-      <svg ref={ref} />
-    </Wellness>
-  )
+  return <Svg ref={ref} id="wheel" />
 }
 
 export default Pie

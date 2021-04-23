@@ -1,0 +1,13 @@
+import styled from 'styled-components'
+
+export const Page = styled.div`
+  height: 100vh;
+`
+
+export const Background = styled.div`
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  z-index: -1;
+`
