@@ -46,6 +46,6 @@ export const Svg = styled.svg`
 `
 
 export const Break = styled(Divider)`
-  margin-top: 30px;
-  margin-bottom: 20px;
+  margin-top: 30px !important;
+  margin-bottom: 20px !important;
 `

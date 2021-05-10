@@ -40,7 +40,7 @@ export const Button = styled(LoadingButton)`
   border-radius: 5px;
   font-size: 1rem;
   text-align: center;
-  background-color: rgb(19, 88, 14);
+  background-color: rgb(19, 88, 14) !important;
   color: #fff !important;
   outline: none;
   cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
