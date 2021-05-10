@@ -1,18 +1,28 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { IconButton, Input } from '@material-ui/core'
-import { Delete, Add } from '@material-ui/icons'
+import {
+  AppBar,
+  IconButton,
+  Input,
+  Drawer,
+  Toolbar,
+  Typography,
+  makeStyles,
+  useTheme
+} from '@material-ui/core'
+import { ChevronLeft, ChevronRight } from '@material-ui/icons'
+import * as htmlToImage from 'html-to-image'
 import WellnessWheel from '../../components/WellnessWheel'
 import Form from '../../components/Form'
 import { Page, Background } from '../../styles/global.styles'
 import {
   WheelPage,
-  Content,
   WheelInstructions,
   ItemList,
   Item,
-  CallToAction
+  CallToAction,
+  Break
 } from '../../styles/WellnessWheel.styles.js'
 
 const initialData = [
@@ -26,9 +36,67 @@ const initialData = [
   { name: 'Social', value: 8 }
 ]
 
+const drawerWidth = 400
+
+const useStyles = makeStyles(theme => ({
+  appBar: {
+    backgroundColor: '#08082a',
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    })
+  },
+  appBarShift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    }),
+    marginRight: drawerWidth
+  },
+  drawerPaper: {
+    width: drawerWidth,
+    padding: 20
+  },
+  menuButton: {
+    fontSize: 12,
+    color: 'white',
+    width: 'max-content',
+    marginRight: 20
+  },
+  title: {
+    margin: '0 !important'
+  },
+  toolbar: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '10px 20px'
+  },
+  content: {
+    flexGrow: 1,
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    }),
+    marginRight: 0,
+    marginTop: 30
+  },
+  contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    }),
+    marginRight: drawerWidth
+  }
+}))
+
 function Wellness() {
-  const ref = useRef()
+  const theme = useTheme()
   const [data, updateData] = useState(initialData)
+  const [loading, setLoading] = useState(false)
+  const [open, setDrawerOpen] = useState(true)
+
+  const classes = useStyles()
 
   function updateItemName(index, name) {
     const values = [...data]
@@ -47,6 +115,34 @@ function Wellness() {
     updateData(values)
   }
 
+  async function handleSubmit(email) {
+    // Email wheel as PNG
+    setLoading(true)
+    const svg = document.querySelector('.wheel')
+
+    const image = await htmlToImage.toPng(svg, {
+      backgroundColor: 'white'
+    })
+
+    const today = new Date(Date.now())
+    const body = {
+      today: today.toDateString(),
+      email,
+      image
+    }
+
+    fetch('/api/email', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
+
+    setLoading(false)
+  }
+
   return (
     <Page>
       <Background>
@@ -60,34 +156,50 @@ function Wellness() {
       </Background>
 
       <WheelPage>
-        <h1>Wheel of Wellness</h1>
+        <AppBar
+          position="static"
+          className={`${classes.appBar} ${open ? classes.appBarShift : ''}`}>
+          <Toolbar className={classes.toolbar}>
+            <Typography variant="h1" className={classes.title}>
+              Wheel of Wellness
+            </Typography>
+            <IconButton
+              color="primary"
+              aria-label="menu"
+              onClick={() => setDrawerOpen(!open)}
+              className={classes.menuButton}>
+              {open ? <ChevronRight /> : <ChevronLeft />}
+              {open ? 'Close' : 'Instructions'}
+            </IconButton>
+          </Toolbar>
+        </AppBar>
 
-        <WellnessWheel data={data} updateData={updateData} />
+        <main
+          className={`${classes.content} ${open ? classes.contentShift : ''}`}>
+          <WellnessWheel data={data} updateData={updateData} />
+        </main>
 
-        <Content
-          ref={ref}
-          elevation={24}
-          onClick={() => ref.current.scrollIntoView({ behavior: 'smooth' })}>
+        <Drawer
+          variant={'persistent'}
+          anchor={'right'}
+          onClose={() => setDrawerOpen(false)}
+          classes={{
+            paper: classes.drawerPaper
+          }}
+          open={open}>
           <WheelInstructions>
             <h2>Instructions</h2>
             <p>
-              Each slice of this wheel represents an aspect of your life. In
-              order for the wheel to roll smoothly each section needs roughly
-              equal attention. Rank each section based on your level of
-              satisfaction with that area of your life. <b>10</b> means
+              Each slice of this wheel represents an aspect of your life, work,
+              or other focus area. In order for the wheel to roll smoothly each
+              section needs roughly equal attention. Rank each section based on
+              your level of satisfaction with that area. <b>10</b> means
               completely satisfied and <b>0</b> means completely unsatisfied.
-              How you interpret that is up to you. Which areas of your life you
-              choose to include is also up to you. Add, remove, change the pie
-              slices to what is impactful for you. The perimeter you get
-              represents <b>YOUR</b> wheel.{' '}
-              <i>How well does your wheel roll?</i>
+              How you interpret that is up to you. Which areas you choose to
+              include is also up to you. Add, remove, change the pie slices to
+              what is impactful for you. The perimeter you get represents{' '}
+              <b>YOUR</b> wheel. <i>How well does your wheel roll?</i>
             </p>
-
-            <CallToAction>
-              🤔 What <b>5 minute action</b> are you{' '}
-              <b>ready, willing, and able</b> to take today in pursuit of
-              positive change?
-            </CallToAction>
           </WheelInstructions>
           <ItemList>
             <h2>Focus Areas</h2>
@@ -115,10 +227,18 @@ function Wellness() {
               Add +
             </IconButton>
           </ItemList>
-        </Content>
 
-        <h3>Enter your email and receive a free copy of your wheel</h3>
-        <Form />
+          <CallToAction font="fantasy">
+            🤔 What <b>5 minute action</b> are you{' '}
+            <b>ready, willing, and able</b> to take today in pursuit of positive
+            change?
+          </CallToAction>
+
+          <Break />
+
+          <h3>Enter your email and receive a free copy of your wheel</h3>
+          <Form handleSubmit={handleSubmit} loading={loading} />
+        </Drawer>
       </WheelPage>
     </Page>
   )

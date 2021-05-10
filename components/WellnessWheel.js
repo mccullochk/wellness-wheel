@@ -2,9 +2,9 @@ import React, { useRef, useEffect, useState } from 'react'
 import * as d3 from 'd3'
 import { Svg } from '../styles/WellnessWheel.styles'
 
-const width = 600
+const width = 725
 const height = 500
-const radius = (Math.min(width, height) / 2) * 1.15
+const radius = (Math.min(width, height) / 2) * 1.23
 const maxValue = 10
 
 function Pie({ data, updateData }) {
@@ -54,9 +54,10 @@ function Pie({ data, updateData }) {
   function writeD3() {
     const svg = d3
       .select(ref.current)
-      .attr('viewBox', [-width / 2, -height / 2, width, height])
-      .attr('width', width)
-      .style('height', height + 100)
+      .attr('viewBox', [-(width*1.1) / 2, -(height*1.1) / 2, (width*1.1), (height*1.1)])
+      .style('width', width)
+      .style('height', height+100)
+      .attr('class', 'wheel')
 
     const g = svg
       .selectAll('path')
@@ -129,6 +130,7 @@ function Pie({ data, updateData }) {
       .attr('d', arcFill)
       .attr('class', d => 'fill')
       .style('fill', d => color(d.data.name))
+      .style('opacity', '0.8')
       .on('click', (event, d) => updateItemValue(d.index, 0))
 
     svg
@@ -168,7 +170,7 @@ function Pie({ data, updateData }) {
     writeD3()
   }, [data])
 
-  return <Svg ref={ref} id="wheel" />
+  return <Svg ref={ref} />
 }
 
 export default Pie
