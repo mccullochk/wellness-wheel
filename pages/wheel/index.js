@@ -15,7 +15,6 @@ import { ChevronLeft, ChevronRight } from '@material-ui/icons'
 import * as htmlToImage from 'html-to-image'
 import WellnessWheel from '../../components/WellnessWheel'
 import Form from '../../components/Form'
-import { writeRequest } from '../../helpers/firebase'
 import { Page, Background } from '../../styles/global.styles'
 import {
   WheelPage,
