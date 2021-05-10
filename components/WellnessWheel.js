@@ -55,8 +55,9 @@ function Pie({ data, updateData }) {
     const svg = d3
       .select(ref.current)
       .attr('viewBox', [-(width*1.1) / 2, -(height*1.1) / 2, (width*1.1), (height*1.1)])
-      .style('width', width)
+      .style('width', '100%')
       .style('height', height+100)
+      .style('max-width', width)
       .attr('class', 'wheel')
 
     const g = svg

@@ -15,6 +15,7 @@ import { ChevronLeft, ChevronRight } from '@material-ui/icons'
 import * as htmlToImage from 'html-to-image'
 import WellnessWheel from '../../components/WellnessWheel'
 import Form from '../../components/Form'
+import { writeRequest } from '../../helpers/firebase'
 import { Page, Background } from '../../styles/global.styles'
 import {
   WheelPage,
@@ -36,7 +37,7 @@ const initialData = [
   { name: 'Social', value: 8 }
 ]
 
-const drawerWidth = 400
+const drawerWidth = 300
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -55,14 +56,20 @@ const useStyles = makeStyles(theme => ({
     marginRight: drawerWidth
   },
   drawerPaper: {
-    width: drawerWidth,
-    padding: 20
+    maxWidth: drawerWidth,
+    padding: 20,
+    flex: 1
   },
   menuButton: {
     fontSize: 12,
     color: 'white',
     width: 'max-content',
     marginRight: 20
+  },
+  menuButtonClose: {
+    color: 'black',
+    padding: 0,
+    alignSelf: 'flex-start'
   },
   title: {
     margin: '0 !important'
@@ -79,7 +86,11 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen
     }),
     marginRight: 0,
-    marginTop: 30
+    marginTop: 30,
+    overflowX: 'scroll',
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
   },
   contentShift: {
     transition: theme.transitions.create('margin', {
@@ -131,6 +142,8 @@ function Wellness() {
       image
     }
 
+    //writeRequest(email, data)
+
     fetch('/api/email', {
       method: 'POST',
       headers: {
@@ -164,12 +177,11 @@ function Wellness() {
               Wheel of Wellness
             </Typography>
             <IconButton
-              color="primary"
               aria-label="menu"
               onClick={() => setDrawerOpen(!open)}
               className={classes.menuButton}>
-              {open ? <ChevronRight /> : <ChevronLeft />}
-              {open ? 'Close' : 'Instructions'}
+              {!open && <ChevronLeft />}
+              {!open && 'Instructions'}
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -188,6 +200,13 @@ function Wellness() {
           }}
           open={open}>
           <WheelInstructions>
+            <IconButton
+              open={open}
+              aria-label="menu"
+              onClick={() => setDrawerOpen(!open)}
+              className={classes.menuButtonClose}>
+              {open && 'x'}
+            </IconButton>
             <h2>Instructions</h2>
             <p>
               Each slice of this wheel represents an aspect of your life, work,

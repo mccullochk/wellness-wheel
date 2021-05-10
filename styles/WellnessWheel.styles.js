@@ -5,7 +5,7 @@ export const WheelPage = styled.div`
   overflow: hidden;
   padding-bottom: 50px;
   text-align: center;
-  
+
   & h1 {
     text-align: left;
     margin-left: 20px;
@@ -33,12 +33,13 @@ export const ItemList = styled(Paper)`
 
 export const WheelInstructions = styled.div`
   margin-bottom: 20px;
-
+  display: flex;
+  flex-direction: column;
 `
 
 export const CallToAction = styled.div`
   font-size: 18px;
-  font-family: ${props => props.font ? props.font : ''};
+  font-family: ${props => (props.font ? props.font : '')};
 `
 
 export const Svg = styled.svg`
